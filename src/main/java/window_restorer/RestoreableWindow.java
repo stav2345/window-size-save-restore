@@ -11,6 +11,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Interface to be used in order to save the shell dimensions on the database.
  * You can use the {@link WindowPreference} class to save and restore the window
@@ -25,6 +28,8 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class RestoreableWindow {
+	
+	private static final Logger LOGGER = LogManager.getLogger(RestoreableWindow.class);
 
 	private Shell shell;
 	private String code;
@@ -73,6 +78,7 @@ public class RestoreableWindow {
 		try {
 			windDao = daoClass.newInstance();
 		} catch (IllegalAccessException | InstantiationException e1) {
+			LOGGER.error("There was a problem accessing the window", e1);
 			e1.printStackTrace();
 			return false;
 		}
@@ -81,6 +87,7 @@ public class RestoreableWindow {
 		try {
 			pref = windDao.get(shell, this.code);
 		} catch (IOException e) {
+			LOGGER.error("There was a problem accessing the window", e);
 			e.printStackTrace();
 		}
 
@@ -132,6 +139,7 @@ public class RestoreableWindow {
 					windDao = daoClass.newInstance();
 					windDao.update(RestoreableWindow.this);
 				} catch (InstantiationException | IllegalAccessException | IOException e) {
+					LOGGER.error("There was a problem accessing the window", e);
 					e.printStackTrace();
 				}
 			}
